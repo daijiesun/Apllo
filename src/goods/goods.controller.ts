@@ -5,7 +5,7 @@ import { UpdateGoodDto, UpdateGoodsTypeDto } from './dto/update-good.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { SearchDto } from './goods.interface';
 import { PageRequest } from 'src/utils/api.interface';
-
+import { Public } from 'src/auth/roles.decorator';
 @ApiTags('Goods')
 @Controller('goods')
 export class GoodsController {
@@ -39,6 +39,7 @@ export class GoodsController {
   batchRemove(@Body() ids: string[]){
     return this.goodsService.batchRemove(ids)
   }
+  @Public()
   @Post("/page")
   search(@Body() searchDto: PageRequest<SearchDto>){
     return this.goodsService.search(searchDto)

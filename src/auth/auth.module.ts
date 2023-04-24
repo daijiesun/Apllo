@@ -5,7 +5,7 @@ import { UsersModule } from '../users/users.module';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { LocalStrategy } from './strategies/local.strategy';
+import { LocalStrategy } from './strategies/local.stategy';
 import { AuthController } from './auth.controller';
 
 // @Global()

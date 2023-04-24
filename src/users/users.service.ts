@@ -40,7 +40,7 @@ export class UsersService {
     const dbUser = await this.usersRepository.save(newUser);
     return {
       status: HttpStatus.CREATED,
-      obj: this.genRO(dbUser)
+      data: this.genRO(dbUser)
     };
   }
 
@@ -48,15 +48,15 @@ export class UsersService {
     const users: User[] | undefined = await this.usersRepository.find({ isActive: true });
     return {
       status: HttpStatus.OK,
-      obj: users ? users : []
+      data: users ? users : []
     }
   }
 
-  async findOne(id: string): Promise<ResPonseOB<UserRO | boolean>> {
+  async findOne(id: string): Promise<ResPonseOB<UserRO | null>> {
     const user = await this.usersRepository.findOne({ id });
     return {
       status: HttpStatus.OK,
-      obj: user ? this.genRO(user) : false
+      data: user ? this.genRO(user) : null
     }
   }
   async findOneByUserNameOrPhoneNum(str: string): Promise<User> {
@@ -86,7 +86,7 @@ export class UsersService {
 
     return {
       status: HttpStatus.OK,
-      obj: true
+      data: true
     }
   }
 
@@ -99,14 +99,8 @@ export class UsersService {
       .execute();
     return {
       status: HttpStatus.OK,
-      obj: true
+      data: true
     }
-  }
-  async login(dto: CreateUserDto) {
-
-  }
-  async logout(dto: CreateUserDto) {
-
   }
   public generateJWT(user: User) {
     let today = new Date();
@@ -121,18 +115,7 @@ export class UsersService {
     }, SECRET);
   };
   private genRO(user: User): UserRO {
-    return {
-      username: user.username,
-      phoneNum: user.phoneNum,
-      id: user.id
-    }
+    const { password, ...other } = user
+    return other
   }
-}
-
-const testAsync: any = async () => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve({ status: 200, obj: true })
-    }, 10000)
-  })
 }

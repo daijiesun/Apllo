@@ -26,7 +26,7 @@ export class ConfigService {
     }
     return {
       status: HttpStatus.OK,
-      obj: true
+      data: true
     }
   }
 
@@ -34,7 +34,7 @@ export class ConfigService {
     const info: Config | undefined = await this.configRepository.findOne();
     return {
       status: HttpStatus.OK,
-      obj: info
+      data: info
     }
   }
 }

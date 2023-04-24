@@ -33,7 +33,7 @@ export class GoodsService {
     const dbUser = await this.goodsRepository.save(goods);
     return {
       status: HttpStatus.CREATED,
-      obj: true//this.genRO(dbUser)
+      data: true//this.genRO(dbUser)
     };
   }
 
@@ -45,7 +45,7 @@ export class GoodsService {
     const goods = await this.goodsRepository.findOne({ where: { id } });
     return {
       status: HttpStatus.OK,
-      obj: goods
+      data: goods
     }
   }
 
@@ -68,7 +68,7 @@ export class GoodsService {
     const dbUser = await this.goodsRepository.save(goods);
     return {
       status: HttpStatus.CREATED,
-      obj: true//this.genRO(dbUser)
+      data: true//this.genRO(dbUser)
     };
   }
 
@@ -82,14 +82,14 @@ export class GoodsService {
 
     return {
       status: HttpStatus.OK,
-      obj: true
+      data: true
     }
   }
   async batchRemove(ids: string[]) {
     await this.goodsRepository.delete(ids)
     return {
       status: HttpStatus.OK,
-      obj: true
+      data: true
     }
   }
   async search(p: PageRequest<SearchDto>): Promise<ResPonseOB<PageResponse<GoodsRo>>> {
@@ -104,7 +104,7 @@ export class GoodsService {
       .getManyAndCount();
     return {
       status: HttpStatus.OK,
-      obj: {
+      data: {
         total: obj[1],
         data: obj[0],
         page: p.page,
@@ -129,7 +129,7 @@ export class GoodsService {
     await goodsType.save(type)
     return {
       status: HttpStatus.OK,
-      obj: true
+      data: true
     }
   }
   async getTypeAll(): Promise<ResPonseOB<Array<GoodsType>>> {
@@ -137,7 +137,7 @@ export class GoodsService {
     const list: Array<GoodsType> = await goodsType.find();
     return {
       status: HttpStatus.OK,
-      obj: list
+      data: list
     }
   }
   async removeGoodsType(id: string) {
@@ -155,7 +155,7 @@ export class GoodsService {
 
     return {
       status: HttpStatus.OK,
-      obj: true
+      data: true
     }
   }
   async updateGoodsType(dto: UpdateGoodsTypeDto) {
@@ -178,7 +178,7 @@ export class GoodsService {
     }
     return {
       status: HttpStatus.OK,
-      obj: true
+      data: true
     }
   }
 

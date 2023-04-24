@@ -2,7 +2,6 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler, UseGuards }
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { JwtAuthGuard } from '../auth/strategies/jwtAuthGuard';
 import { JwtService } from '@nestjs/jwt';
 
 

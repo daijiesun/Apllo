@@ -16,6 +16,8 @@ import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 // import { JwtStrategy } from './auth/strategies/jwt.strategy';
 
+import { APP_GUARD } from '@nestjs/core';
+import { LocalStrategy } from './auth/strategies/local.stategy';
 
 const env = process.env.NODE_ENV;
 const ormConfig = TypeOrmModule.forRootAsync({
@@ -59,6 +61,9 @@ const modeConfig = ConfigModule.forRoot({
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: LocalStrategy,
+  }],
 })
 export class AppModule { }
