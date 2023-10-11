@@ -1,5 +1,4 @@
-import { CreateImageDto } from "src/images/dto/create-image.dto";
-export class CreateGoodDto {
+export class CreateArticleDto {
     title: string;
     description: string;
     details: string;
@@ -11,6 +10,6 @@ export class CreateGoodDto {
     isValid:boolean;
 }
 
-export class CreateGoodsTypeDto{
+export class CreateArticleTypeDto{
     title: string;
 }

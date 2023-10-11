@@ -13,7 +13,7 @@ import {
 } from 'class-validator';
 import { BaseContent } from "../../common/baseEnty";
 @Entity()
-export class Goods  extends BaseContent{
+export class Article  extends BaseContent{
     @Column({
         comment: "商品名称"
     })

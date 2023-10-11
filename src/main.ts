@@ -1,15 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
 // 静态文件请求，需要使用下面的插件
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 // 拦截器
 import {JwtInterceptor} from './Interceptor/jwt.Interceptor'
+
+import * as session from 'express-session';
+
+const figlet = require("figlet");
 const colors = require('colors');
 declare const module: any;
-
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -23,7 +25,14 @@ async function bootstrap() {
   //     },
   //   },
   // });
-
+  app.use(
+    session({
+      secret: 'my-secret',
+      resave: false,
+      saveUninitialized: true,
+      cookie: { maxAge: 60000,httpOnly: false, }
+    })
+  );
   // swagger api配置
   const options = new DocumentBuilder()
     .setTitle('Apollo Api')
@@ -34,7 +43,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
-  // cros
+  // cross
   app.enableCors();
   
   //静态文件请求路径
@@ -42,14 +51,21 @@ async function bootstrap() {
     prefix: '/static/'
   })
 
+  // 全局拦截器
   app.useGlobalInterceptors(new JwtInterceptor())
-  // port
-  await app.listen(3000);
 
+  // 启动nest服务
+  await app.listen(3000);
+  figlet("Apollo Boot", function (err, data) {
+    if (err) {
+      console.dir(err);
+      return;
+    }
+    console.log(data);
+  });
   console.log(colors.red(`Application is running on: ${await app.getUrl()}`));
   console.log(colors.red(`Environment: ${process.env.NODE_ENV}`))
   console.log(colors.red(`Application Name: ${process.env.APPLICATION}`))
-
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());

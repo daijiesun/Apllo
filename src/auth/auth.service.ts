@@ -3,6 +3,8 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ResPonseOB } from 'src/utils/api.interface';
 import { UserRO } from 'src/users/users.interface';
+import { LoginDto } from './dto/login-user.dto';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -18,12 +20,12 @@ export class AuthService {
     }
     return null;
   }
-  async login(user: { username: string, password: string }): Promise<ResPonseOB<string | Object>> {
+  async login(user: LoginDto): Promise<ResPonseOB<string | Object>> {
     const result = await this.validateUserByPwd(user.username, user.password)
     if (!result) {
       return {
         status: HttpStatus.NOT_FOUND,
-        errors: '用户名或密码错误'
+        message: '用户名或密码错误'
       }
     }
     // 生成token和其他操作，比如存redis
@@ -31,11 +33,32 @@ export class AuthService {
     return {
       status: HttpStatus.OK,
       data: {
-        username: result.username,
-        phoneNum: result.phoneNum,
+        ...result,
         token: `Bearer ${this.jwtService.sign(payload)}`
       }
     };
+  }
+  async register(user: LoginDto): Promise<ResPonseOB<string | Object>> {
+    const has = await this.usersService.findOneByUserNameOrPhoneNum(user.username);
+    if(has) {
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        message: '该用户已存在'
+      }
+    }
+    const newUser = await this.usersService.register({username: user.username, password: user.password})
+    if (newUser && newUser.status === HttpStatus.CREATED) {
+    // 生成token和其他操作，比如存redis
+      const payload = { username: newUser.data.username, sub: newUser.data.id };
+      return {
+        status: HttpStatus.OK,
+        data: {
+          ...newUser,
+          token: `Bearer ${this.jwtService.sign(payload)}`
+        }
+      };
+    }
+
   }
   async getUserInfoByToken(token: string): Promise<ResPonseOB<null | UserRO>> {
     const result = {

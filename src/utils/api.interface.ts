@@ -3,7 +3,7 @@ import { HttpStatus } from "@nestjs/common/enums";
 export interface ResPonseOB<T>{
     status: HttpStatus
     data?: T,
-    errors?: T
+    message?: T
 }
 
 export class PageRequest<T>{

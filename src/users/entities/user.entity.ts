@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, UpdateDateColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import {
   validate,
@@ -13,11 +13,13 @@ import {
   MaxLength,
 } from 'class-validator';
 import { BaseContent } from "../../common/baseEnty";
+import { Role } from '../users.interface';
 
 @Entity()
 export class User extends BaseContent{
+
   @MinLength(2, {
-    message: "The username must be more than 2 characters"
+    message: "用户名至少两位字符"
   })
   @Column({ unique: true })
   username: string;
@@ -25,21 +27,20 @@ export class User extends BaseContent{
   @Column({ default: true })
   isActive: boolean;
 
+  @Column({ default: Role.visitor})
+  role: Role;
   
   @Exclude()//序列化，返回实体的时候不显示
   @Column({ select: false}) 
   @MinLength(6, {
-    message: "The password must be more than 6 characters"
+    message: "密码至少6位字符"
   })
   @Column()
   password: string;
 
-  @Length(11, 11, {
-    message: 'The phone number must be 11 digits'
-  })
   @Column({
     length: 11,
-    unique: true
+    default: ''
   })
   phoneNum: string;
 }

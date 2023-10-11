@@ -13,7 +13,8 @@ const getFileUrl = (fileName: string) => {
 export class UploadController {
   constructor(private readonly uploadService: UploadService) { }
 
-  @Post('/action')
+  // @Public()
+  @Post('action')
   @UseInterceptors(FileInterceptor('file', {
     // 文件存储位置
     storage: diskStorage({
