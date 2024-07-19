@@ -29,7 +29,7 @@
 ## Installation
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
 ## Running the app
@@ -70,10 +70,11 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 ## Config
 
+#  Redis
 #  MySql
-
+.env请看文件，线上环境请新建.env.production文件，并填写真实数据库信息
 #  Swagger
-
+localhost:3000/api
 ## License
 
 Nest is [MIT licensed](LICENSE).

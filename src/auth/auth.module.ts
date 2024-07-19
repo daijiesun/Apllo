@@ -5,25 +5,19 @@ import { UsersModule } from '../users/users.module';
 import { AuthService } from './auth.service';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { LocalStrategy } from './strategies/local.stategy';
 import { AuthController } from './auth.controller';
 
-// @Global()
 @Module({
   imports: [
     UsersModule,
-    // PassportModule,
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    {
-      ...JwtModule.register({
-        secret: jwtConstants.secret,
-        signOptions: { expiresIn: '24h' },
-      }),
-      global: true
-    }
+    PassportModule,
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '6h' },
+    })
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
+  providers: [AuthService,JwtStrategy],
+  exports: [AuthService, JwtModule],
   controllers: [AuthController],
 })
 export class AuthModule { }

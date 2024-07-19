@@ -19,18 +19,15 @@ export class ArticleService {
     const article = new Article();
     article.title = createArticleDto.title;
     article.description = createArticleDto.description;
-    article.amount = createArticleDto.amount;
     article.avatar = createArticleDto.avatar;
-    article.count = createArticleDto.count;
     article.type = createArticleDto.type;
-    article.swipeImages = createArticleDto.swipeImages;
     article.details = createArticleDto.details;
     article.isValid = createArticleDto.isValid;
     const errors = await validate(article);
     if (errors.length) {
       throw new HttpException({ status: HttpStatus.BAD_REQUEST, message: errors }, HttpStatus.BAD_REQUEST);
     }
-    const dbUser = await this.articleRepository.save(article);
+    await this.articleRepository.save(article);
     return {
       status: HttpStatus.CREATED,
       data: true//this.genRO(dbUser)
@@ -54,11 +51,8 @@ export class ArticleService {
     article.id = updateArticleDto.id;
     article.title = updateArticleDto.title;
     article.description = updateArticleDto.description;
-    article.amount = updateArticleDto.amount;
     article.avatar = updateArticleDto.avatar;
-    article.count = updateArticleDto.count;
     article.type = updateArticleDto.type;
-    article.swipeImages = updateArticleDto.swipeImages;
     article.details = updateArticleDto.details;
     article.isValid = updateArticleDto.isValid;
     const errors = await validate(article);
@@ -85,13 +79,17 @@ export class ArticleService {
       data: true
     }
   }
-  async batchRemove(ids: string[]) {
-    await this.articleRepository.delete(ids)
+  async batchDelete(ids: string) {
+    await this.articleRepository.createQueryBuilder()
+      .delete()
+      .where("id IN (:...ids)", { ids: ids.split(',') })
+      .execute();
     return {
       status: HttpStatus.OK,
       data: true
     }
   }
+  // 分页查询文章
   async search(p: PageRequest<SearchDto>): Promise<ResPonseOB<PageResponse<ArticleRo>>> {
     const articleTable = await getRepository(Article).createQueryBuilder('article');
     const obj = await articleTable
@@ -113,12 +111,13 @@ export class ArticleService {
     }
   }
 
-  // about article type api
+  //TODO: 文章类型api
+  // 创建类型
   async createArticleType(dto: CreateArticleTypeDto): Promise<ResPonseOB<boolean>> {
     const articleType = await getRepository(ArticleType);
     const has = await articleType.findOne({ title: dto.title })
     if (has) {
-      throw new HttpException({ message: 'The type is exist', status: HttpStatus.BAD_REQUEST }, HttpStatus.BAD_REQUEST);
+      throw new HttpException({ message: '该类型已经存在', status: HttpStatus.BAD_REQUEST }, HttpStatus.BAD_REQUEST);
     }
     const type = new ArticleType();
     type.title = dto.title;
@@ -132,7 +131,9 @@ export class ArticleService {
       data: true
     }
   }
+  // 获取所有文章类型
   async getTypeAll(): Promise<ResPonseOB<Array<ArticleType>>> {
+    console.log("object");
     const articleType = await getRepository(ArticleType);
     const list: Array<ArticleType> = await articleType.find();
     return {
@@ -141,7 +142,6 @@ export class ArticleService {
     }
   }
   async removeArticleType(id: string) {
-    // 查询有没有商品在用这个类型
     const has = await this.articleRepository.findOne({ where: { type: id } });
     if (has) {
       throw new HttpException({ status: HttpStatus.BAD_REQUEST, message: '该类型有商品正在使用，无法删除！！！' }, HttpStatus.BAD_REQUEST);
@@ -159,29 +159,24 @@ export class ArticleService {
     }
   }
   async updateArticleType(dto: UpdateArticleTypeDto) {
-    if (dto.id) {
-      await getConnection()
-        .createQueryBuilder()
-        .update(ArticleType)
-        .set({ title: dto.title })
-        .where("id = :id", { id: dto.id })
-        .execute();
-    } else {
-      const newType = new ArticleType();
-      newType.title = dto.title;
-      await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(ArticleType)
-        .values([{ title: dto.title }])
-        .execute();
+    if (!dto.id || !dto.title) {
+      throw new HttpException({ message: '类型ID或title不能为空', status: HttpStatus.BAD_REQUEST }, HttpStatus.BAD_REQUEST);
     }
+    const has = await getRepository(ArticleType).findOne({ title: dto.title, id: Not(dto.id) })
+    if (has) {
+      throw new HttpException({ message: '该类型title已存在', status: HttpStatus.BAD_REQUEST }, HttpStatus.BAD_REQUEST);
+    }
+    await getConnection()
+      .createQueryBuilder()
+      .update(ArticleType)
+      .set({ title: dto.title })
+      .where("id = :id", { id: dto.id })
+      .execute();
     return {
       status: HttpStatus.OK,
       data: true
     }
   }
-
 
   private genRO(article: Article): ArticleRo {
     return {

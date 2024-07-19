@@ -1,7 +1,13 @@
+/**
+* @description:  认证控制器
+* @fileName:  auth.controller
+* @author: SunDaijie
+* @date: 2024-07-18 19:17:11
+* @version: V1.0.0
+*/
 import { Controller, Get, HttpStatus, Post, Param, Request, Headers, Response, UseGuards, Body, Session } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './strategies/local.stategy';
 import { AuthGuard } from '@nestjs/passport';
 import { Public, Roles } from './roles.decorator';
 import { LoginDto } from './dto/login-user.dto';
@@ -37,9 +43,9 @@ export class AuthController {
     return this.authService.register(body);
   }
   // @UseGuards(JwtAuthGuard) //自定义扩展jwt策略
-  // @UseGuards(AuthGuard('jwt')) // 走jwt策略
   @Public()
   @Post('logout')
+  // @UseGuards(AuthGuard('jwt')) // 走jwt策略
   @ApiOperation({ summary: '退出登录' })
   logout(@Request() req) {
     return {
@@ -60,13 +66,6 @@ export class AuthController {
         { code: Role.visitor, name: '用户' }
       ]
     };
-  }
-  // @UseGuards(LocalStrategy)
-  @Public()
-  @Get('token')
-  @UseGuards(AuthGuard('local'))
-  getUserInfoByToken(@Headers('Authorization') token: string) {
-    return this.authService.getUserInfoByToken(token)
   }
 
   // 获取图形验证码（这里后期待完善）

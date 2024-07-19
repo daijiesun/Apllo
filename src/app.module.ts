@@ -12,11 +12,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
-// import { JwtStrategy } from './auth/strategies/jwt.strategy';
-
 import { APP_GUARD } from '@nestjs/core';
-import { LocalStrategy } from './auth/strategies/local.stategy';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 // import { ClientsModule, Transport } from '@nestjs/microservices';
+import { JwtAuthGuard } from './auth/strategies/jwt-auth.guard';
+import { RolesGuard } from './auth/strategies/roles.guard';
 const env = process.env.NODE_ENV;
 const ormConfig = TypeOrmModule.forRootAsync({
   useFactory: () => ({
@@ -31,7 +31,8 @@ const ormConfig = TypeOrmModule.forRootAsync({
     cache: true,
     retryAttempts: 1,
     autoLoadEntities: true,
-    logging: true
+    logging: true,
+    namingStrategy: new SnakeNamingStrategy(), // orm驼峰转下划线
   }),
 });
 
@@ -68,9 +69,15 @@ const modeConfig = ConfigModule.forRoot({
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: LocalStrategy,
-  }],
+  providers: [AppService,
+    {  // jwt全局拦截策略
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    { // 角色拦截策略
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule { }

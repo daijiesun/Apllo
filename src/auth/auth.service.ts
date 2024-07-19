@@ -20,6 +20,7 @@ export class AuthService {
     }
     return null;
   }
+  // 登录
   async login(user: LoginDto): Promise<ResPonseOB<string | Object>> {
     const result = await this.validateUserByPwd(user.username, user.password)
     if (!result) {
@@ -38,6 +39,7 @@ export class AuthService {
       }
     };
   }
+  // 注册
   async register(user: LoginDto): Promise<ResPonseOB<string | Object>> {
     const has = await this.usersService.findOneByUserNameOrPhoneNum(user.username);
     if(has) {
@@ -60,6 +62,7 @@ export class AuthService {
     }
 
   }
+  // 根据token获取用户信息
   async getUserInfoByToken(token: string): Promise<ResPonseOB<null | UserRO>> {
     const result = {
       status: HttpStatus.BAD_REQUEST,

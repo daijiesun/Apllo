@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, UseGuards, Query,UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterUserDto,CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -6,6 +6,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/auth/roles.decorator';
 import { PageRequest, ResPonseOB } from 'src/utils/api.interface';
 import { SearchDto } from './users.interface';
+import { DateTransformInterceptor } from '../interceptor/date-transform.interceptor';
 
 @ApiTags('User')
 @Controller('users')
@@ -19,19 +20,16 @@ export class UsersController {
     return this.usersService.register(registerUserDto);
   }
 
-  @Post('create')
-  @Roles('admin')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
   // 分页查询
   @Post('list')
+  @UseInterceptors(DateTransformInterceptor)
   findPage(@Body() body: PageRequest<SearchDto>){
     return this.usersService.findPage(body);
   }
 
   // 查所有
   @Get('list')
+  @Roles('admin')
   findAll() {
     return this.usersService.findAll();
   }
@@ -52,10 +50,4 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  @Delete('')
-  @Roles('admin')
-  batchRemove(@Query('ids') ids: string) {
-    let idList = ids.split(',')
-    return this.usersService.batchRemove(idList);
-  }
 }

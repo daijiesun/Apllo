@@ -1,4 +1,4 @@
-import { Entity, Column, JoinColumn,OneToOne,OneToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, JoinColumn, OneToOne, OneToMany, ManyToOne } from 'typeorm';
 import {
     validate,
     validateOrReject,
@@ -11,60 +11,52 @@ import {
     MinLength,
     MaxLength,
 } from 'class-validator';
-import { BaseContent } from "../../common/baseEnty";
+import { BaseContent } from "../../common/base-enty";
 @Entity()
-export class Article  extends BaseContent{
+export class Article extends BaseContent {
     @Column({
-        comment: "商品名称"
+        comment: "名称",
+        default: ''
     })
-    @MinLength(1,{
-        message: "the title must be more than 1 characters"
+    @MinLength(1, {
+        message: "名称不能为空",
     })
-    title: string = "";
+    title: string
 
     @Column({
-        comment: "商品类型",
-        type:"char",
+        comment: "所属类型",
+        type: "char",
         length: 36
     })
     type: string;
 
     @Column({
-        comment: "商品描述"
+        comment: "描述",
+        default: ''
     })
-    @MinLength(1,{
-        message: "the title must be more than 1 characters"
-    })
-    description: string = "";
+    description: string
 
     @Column({
-        comment: '金额'
+        comment: '封面图',
+        default: ''
     })
-    amount: number = 0;
+    avatar: string
 
     @Column({
-        comment: '库存'
+        comment: "内容",
+        default: ''
     })
-    count: number = 0;
+    details: string
 
     @Column({
-        comment: '缩略图'
+        comment: '是否有效',
+        default: true
     })
-    avatar: string = "";
+    isValid: boolean
 
     @Column({
-        comment: '轮播图片',
-        type: 'simple-array'
+        comment: '所属用户',
+        default: ''
     })
-    swipeImages: string[] = [];
-
-    @Column({
-        comment: "商品详情"
-    })
-    details: string = "";
-
-    @Column({
-        comment: '是否有效'
-    })
-    isValid: boolean = true;
+    userId: string
 }

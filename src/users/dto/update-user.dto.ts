@@ -6,4 +6,6 @@ export class UpdateUserDto extends PartialType(RegisterUserDto) {
     readonly id: string;
     readonly role: Role;
     readonly isActive: boolean;
+    readonly avatar: string;
+    readonly introduction: string;
 }

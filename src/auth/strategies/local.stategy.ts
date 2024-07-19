@@ -26,7 +26,6 @@ export class LocalStrategy extends AuthGuard('jwt') {
     super()
   }
   async canActivate(context: ExecutionContext) {
-    return true
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [

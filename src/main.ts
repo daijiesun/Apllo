@@ -5,7 +5,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 // 拦截器
-import {JwtInterceptor} from './Interceptor/jwt.Interceptor'
+import {JwtInterceptor} from './Interceptor/jwt.interceptor'
 
 import * as session from 'express-session';
 
@@ -43,7 +43,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
-  // cross
+  // cross 跨域配置
   app.enableCors();
   
   //静态文件请求路径

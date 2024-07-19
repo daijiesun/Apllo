@@ -11,4 +11,6 @@ export class RegisterUserDto {
 export class CreateUserDto extends PartialType(RegisterUserDto) {
     role: Role = Role.visitor;
     isActive: Boolean = true;
+    avatar: string = '';
+    introduction: string = '';
 }
